@@ -41,17 +41,25 @@ footer div {
   padding-top: 8px;
 }
 
-section.navbar-section {
-  padding: 8px;
-}
-
 #main {
   width: 90%;
   margin: 0 auto;
-  margin-bottom: 96px;
-  margin-top: 32px;
+  margin-bottom: 2%;
+  margin-top: 2%;
   box-sizing: content-box;
-  /*border: 3px solid gray;*/
+}
+
+.error {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+}
+.error h1 {
+  font-size: 5em;
+  margin-bottom: 5%;
+}
+.error a {
+  text-decoration: none;
+  color: #af1d1d;
 }
 
 .columns {
