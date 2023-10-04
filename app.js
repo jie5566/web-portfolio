@@ -1,12 +1,10 @@
-const express = require("express"); // loads the express package
-const { engine } = require("express-handlebars"); // loads handlebars for Express
-
-//sqlite3
+// loads several packages
+const express = require("express");
+const { engine } = require("express-handlebars");
 const sqlite3 = require("sqlite3");
 
 // MODEL (DATA)
-const db = new sqlite3.Database("projects-jie.db");
-
+const db = new sqlite3.Database("projects-jl3.db");
 // creates table projects at startup
 db.run(
   "CREATE TABLE projects (pid INTEGER PRIMARY KEY, pname TEXT NOT NULL, pyear INTEGER NOT NULL, pdesc TEXT NOT NULL, ptype TEXT NOT NULL, pimgURL TEXT NOT NULL)",
@@ -213,8 +211,10 @@ db.run(
   }
 );
 
-const port = 8080; // defines the port
-const app = express(); // creates the Express application
+// defines the port
+const port = 8080;
+// creates the Express app
+const app = express();
 
 // defines handlebars engine
 app.engine("handlebars", engine());
@@ -223,47 +223,118 @@ app.set("view engine", "handlebars");
 // defines the views directory
 app.set("views", "./views");
 
-// define static directory "public" to access css/ and img/
+// define static directory "public"
 app.use(express.static("public"));
 
-// MODEL (DATA)
-const humans = [
-  { id: "0", name: "Jerome" },
-  { id: "1", name: "Mira" },
-  { id: "2", name: "Linus" },
-  { id: "3", name: "Susanne" },
-  { id: "4", name: "Jasmin" },
-];
-
-// CONTROLLER (THE BOSS)
-// defines route "/"
-app.get("/", function (request, response) {
-  response.render("home.handlebars");
+// defines a middleware to log all the incoming requests' URL
+app.use((req, res, next) => {
+  console.log("Req. URL: ", req.url);
+  next();
 });
 
-// defines route "/humans"
-app.get("/humans", function (request, response) {
-  const model = { listHumans: humans }; // defines the model
-  // in the next line, you should send the abovedefined
-  // model to the page and not an empty object {}...
-  response.render("humans.handlebars", model);
+/***
+ROUTES
+***/
+// renders a view WITHOUT DATA
+app.get("/", (req, res) => {
+  res.render("home");
 });
 
-// defines route "/humans/1"
-app.get("/humans/:id", function (request, response) {
-  const humanId = request.params.id;
-  const model = humans[humanId]; // defines the model
-  // in the next line, you should send the abovedefined
-  // model to the page and not an empty object {}...
-  response.render("human.handlebars", model);
+// renders a view WITHOUT DATA
+app.get("/about", (req, res) => {
+  res.render("about");
 });
 
-// defines the final default route 404 NOT FOUND
-app.use(function (req, res) {
-  res.status(404).render("404.handlebars");
+// renders a view WITHOUT DATA
+app.get("/contact", (req, res) => {
+  res.render("contact");
 });
 
-// runs the app and listens to the port
+// renders a view WITH DATA!!!
+app.get("/projects", (req, res) => {
+  db.all("SELECT * FROM projects", function (error, theProjects) {
+    if (error) {
+      const model = {
+        dbError: true,
+        theError: error,
+        projects: [],
+      };
+      // renders the page with the model
+      res.render("projects.handlebars", model);
+    } else {
+      const model = {
+        dbError: false,
+        theError: "",
+        projects: theProjects,
+      };
+      // renders the page with the model
+      res.render("projects.handlebars", model);
+    }
+  });
+});
+
+// sends back a SVG image if asked for "/favicon.ico"
+app.get("/favicon.ico", (req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.sendFile(__dirname + "/img/jl.svg");
+});
+
+// run the server and make it listen to the port
 app.listen(port, () => {
   console.log(`Server running and listening on port ${port}...`);
 });
+
+// const port = 8080; // defines the port
+// const app = express(); // creates the Express application
+
+// // defines handlebars engine
+// app.engine("handlebars", engine());
+// // defines the view engine to be handlebars
+// app.set("view engine", "handlebars");
+// // defines the views directory
+// app.set("views", "./views");
+
+// // define static directory "public" to access css/ and img/
+// app.use(express.static("public"));
+
+// // MODEL (DATA)
+// const humans = [
+//   { id: "0", name: "Jerome" },
+//   { id: "1", name: "Mira" },
+//   { id: "2", name: "Linus" },
+//   { id: "3", name: "Susanne" },
+//   { id: "4", name: "Jasmin" },
+// ];
+
+// // CONTROLLER (THE BOSS)
+// // defines route "/"
+// app.get("/", function (request, response) {
+//   response.render("home.handlebars");
+// });
+
+// // defines route "/humans"
+// app.get("/humans", function (request, response) {
+//   const model = { listHumans: humans }; // defines the model
+//   // in the next line, you should send the abovedefined
+//   // model to the page and not an empty object {}...
+//   response.render("humans.handlebars", model);
+// });
+
+// // defines route "/humans/1"
+// app.get("/humans/:id", function (request, response) {
+//   const humanId = request.params.id;
+//   const model = humans[humanId]; // defines the model
+//   // in the next line, you should send the abovedefined
+//   // model to the page and not an empty object {}...
+//   response.render("human.handlebars", model);
+// });
+
+// // defines the final default route 404 NOT FOUND
+// app.use(function (req, res) {
+//   res.status(404).render("404.handlebars");
+// });
+
+// // runs the app and listens to the port
+// app.listen(port, () => {
+//   console.log(`Server running and listening on port ${port}...`);
+// });
