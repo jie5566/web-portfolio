@@ -11,6 +11,10 @@
 .person-img {
   margin-top: 3%;
 }
+.person-img img {
+  height: 65vh;
+  width: auto;
+}
 
 nav {
   list-style-type: none;
@@ -18,11 +22,11 @@ nav {
   float: right;
   display: inline;
   text-align: center;
+  padding-right: 1.5em;
 }
-nav a {
+.menu a {
   text-decoration: none;
   color: black;
-  padding-right: 1.5em;
 }
 
 footer {
@@ -42,10 +46,10 @@ footer div {
 }
 
 #main {
-  width: 90%;
-  margin: 0 5%;
+  width: 100%;
   margin-bottom: 2%;
   margin-top: 2%;
+  padding: 2%;
   box-sizing: content-box;
 }
 
@@ -69,19 +73,22 @@ footer div {
   text-decoration: none;
   color: black;
 }
+.container {
+  margin-right: 0px;
+}
 .columns {
   box-sizing: border-box;
-  margin: 16px 0;
 }
 
+/* .card-image {
+  height: 23vh;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 2%;
+}
 .card {
-  border: 3px dashed orange;
-  border-radius: 12px;
-  padding: 2%;
-  box-sizing: border-box;
-  margin: 1rem;
-}
-
-.img-responsive {
-  box-shadow: -1px -2px lightgray, 1px 2px lightgray;
-}
+  width: 25vw;
+  height: 20vh;
+  margin-top: 10%;
+  gap: 5%;
+} */

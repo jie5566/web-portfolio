@@ -1,13 +1,15 @@
+//the following structure are from Jerome, based on his portfolio, I adepted it to mine version
+
 // loads several packages
 const express = require("express");
 const { engine } = require("express-handlebars");
 const sqlite3 = require("sqlite3");
 
 // MODEL (DATA)
-const db = new sqlite3.Database("projects-jl3.db");
+const db = new sqlite3.Database("projects-jie.db");
 // creates table projects at startup
 db.run(
-  "CREATE TABLE projects (pid INTEGER PRIMARY KEY, pname TEXT NOT NULL, pyear INTEGER NOT NULL, pdesc TEXT NOT NULL, ptype TEXT NOT NULL, pimgURL TEXT NOT NULL)",
+  "CREATE TABLE projects (pid INTEGER PRIMARY KEY, pname TEXT NOT NULL, ptype TEXT NOT NULL, pdesc TEXT NOT NULL, pimgURL TEXT NOT NULL)",
   (error) => {
     if (error) {
       // tests error: display error
@@ -19,54 +21,61 @@ db.run(
       const projects = [
         {
           id: "1",
-          name: "Counting people with a camera",
-          type: "research",
-          desc: "The purpose of this project is to count people passing through a corridor and to know how many are in the room at a certain time.",
-          year: 2022,
-          dev: "Python and OpenCV (Computer vision) library",
-          url: "/img/counting.png",
+          name: "Lunar Lander",
+          type: "Game",
+          desc: "It is a fun game, people need to land the rocket before the fuel finishs.",
+          url: "/img/lunarlander.png",
         },
         {
           id: "2",
-          name: "Visualisation of 3D medical images",
-          type: "research",
-          desc: "The project makes a 3D model of the analysis of the body of a person and displays the detected health problems. It is useful for doctors to view in 3D their patients and the evolution of a disease.",
-          year: 2012,
-          url: "/img/medical.png",
+          name: "Chicken survives",
+          type: "Game",
+          desc: "Try to survive as long as possible, the hen eats worms, and make small chicken, avoid the fox!",
+          url: "/img/chickenSurvive.png",
         },
         {
           id: "3",
-          name: "Multiple questions system",
-          type: "teaching",
-          desc: "During the lockdowns in France, this project was useful to test the students online with a Quizz system.",
-          year: 2021,
-          url: "/img/qcm07.png",
+          name: "Todo list",
+          type: "website",
+          desc: "It is an useful tool to manage your day.",
+          url: "/img/todo.png",
         },
         {
           id: "4",
-          name: "Image comparison with the Local Dissmilarity Map",
-          desc: "The project is about finding and quantifying the differences between two images of the same size. The applications were numerous: satallite imaging, medical imaging,...",
-          year: 2020,
-          type: "research",
-          url: "/img/diaw02.png",
+          name: "Recipe website",
+          type: "Website",
+          desc: "It is a group project, we build up an Asian food website.",
+          url: "/img/recipe.png",
         },
         {
           id: "5",
-          name: "Management system for students' internships",
-          desc: "This project was about the creation of a database to manage the students' internships.",
-          year: 2012,
-          type: "teaching",
-          url: "/img/management.png",
+          name: "Gin branding",
+          type: "Design",
+          desc: "It is a branding project, I designed the logo, and it is a menu to guide using.",
+          url: "/img/logo.png",
+        },
+        {
+          id: "6",
+          name: "JTH category cover design",
+          type: "Design",
+          desc: "I took part in the JTH category cover design, it is a good practice.",
+          url: "/img/cover.png",
+        },
+        {
+          id: "7",
+          name: "Music magazine",
+          type: "Design",
+          desc: "This project is a group project, it is a magazine about the aesthetics of different music genre.",
+          url: "/img/sound.png",
         },
       ];
       // inserts projects
       projects.forEach((oneProject) => {
         db.run(
-          "INSERT INTO projects (pid, pname, pyear, pdesc, ptype, pimgURL) VALUES (?, ?, ?, ?, ?, ?)",
+          "INSERT INTO projects (pid, pname, pdesc, ptype, pimgURL) VALUES (?, ?, ?, ?, ?)",
           [
             oneProject.id,
             oneProject.name,
-            oneProject.year,
             oneProject.desc,
             oneProject.type,
             oneProject.url,
@@ -86,7 +95,7 @@ db.run(
 
 // creates skills projects at startup
 db.run(
-  "CREATE TABLE skills (sid INTEGER PRIMARY KEY, sname TEXT NOT NULL, sdesc TEXT NOT NULL, stype TEXT NOT NULL)",
+  "CREATE TABLE skills (sid INTEGER PRIMARY KEY, sname TEXT NOT NULL, stype TEXT NOT NULL, spro TEXT NOT NULL)",
   (error) => {
     if (error) {
       // tests error: display error
@@ -98,57 +107,45 @@ db.run(
       const skills = [
         {
           id: "1",
-          name: "PHP",
+          name: "HTML",
           type: "Programming language",
-          desc: "Programming with PHP on the server side.",
+          proficiency: "Competent",
         },
         {
           id: "2",
-          name: "Python",
+          name: "CSS",
           type: "Programming language",
-          desc: "Programming with Python.",
+          proficiency: "Competent",
         },
         {
           id: "3",
-          name: "Java",
+          name: "JavaScript",
           type: "Programming language",
-          desc: "Programming with Java.",
+          proficiency: "Competent",
         },
         {
           id: "4",
-          name: "ImageJ",
-          type: "Framework",
-          desc: "Java Framework for Image Processing.",
+          name: "MidJourney",
+          type: "Design",
+          proficiency: "Skilled",
         },
         {
           id: "5",
-          name: "Javascript",
-          type: "Programming language",
-          desc: "Programming with Javascript on the client side.",
+          name: "Indesign",
+          type: "Design",
+          proficiency: "Competent",
         },
         {
           id: "6",
-          name: "Node",
-          type: "Programming language",
-          desc: "Programming with Javascript on the server side.",
+          name: "Photoshop",
+          type: "Design",
+          proficiency: "Competent",
         },
         {
           id: "7",
-          name: "Express",
-          type: "Framework",
-          desc: "A framework for programming Javascript on the server side.",
-        },
-        {
-          id: "8",
-          name: "Scikit-image",
-          type: "Library",
-          desc: "A library for Image Processing with Python.",
-        },
-        {
-          id: "9",
-          name: "OpenCV",
-          type: "Library",
-          desc: "A library for Image Processing with Python.",
+          name: "Illustrator",
+          type: "Design",
+          proficiency: "Competent",
         },
       ];
 
@@ -156,7 +153,7 @@ db.run(
       skills.forEach((oneSkill) => {
         db.run(
           "INSERT INTO skills (sid, sname, sdesc, stype) VALUES (?, ?, ?, ?)",
-          [oneSkill.id, oneSkill.name, oneSkill.desc, oneSkill.type],
+          [oneSkill.id, oneSkill.name, oneSkill.type, oneSkill.proficiency],
           (error) => {
             if (error) {
               console.log("ERROR: ", error);
@@ -182,16 +179,25 @@ db.run(
       console.log("---> Table projectsSkills created!");
 
       const projectsSkills = [
-        { id: "1", pid: "1", sid: "2" },
-        { id: "2", pid: "1", sid: "8" },
-        { id: "3", pid: "1", sid: "9" },
+        { id: "1", pid: "1", sid: "3" },
+        { id: "2", pid: "2", sid: "1" },
+        { id: "3", pid: "2", sid: "2" },
         { id: "4", pid: "2", sid: "3" },
-        { id: "5", pid: "2", sid: "4" },
+        { id: "5", pid: "2", sid: "6" },
         { id: "6", pid: "3", sid: "1" },
-        { id: "7", pid: "4", sid: "2" },
-        { id: "8", pid: "4", sid: "8" },
-        { id: "9", pid: "4", sid: "9" },
-        { id: "10", pid: "5", sid: "1" },
+        { id: "7", pid: "3", sid: "2" },
+        { id: "8", pid: "3", sid: "2" },
+        { id: "9", pid: "3", sid: "7" },
+        { id: "10", pid: "4", sid: "1" },
+        { id: "11", pid: "4", sid: "2" },
+        { id: "12", pid: "4", sid: "3" },
+        { id: "13", pid: "5", sid: "5" },
+        { id: "14", pid: "5", sid: "6" },
+        { id: "15", pid: "5", sid: "7" },
+        { id: "16", pid: "6", sid: "4" },
+        { id: "17", pid: "6", sid: "5" },
+        { id: "18", pid: "7", sid: "4" },
+        { id: "19", pid: "7", sid: "5" },
       ];
       // inserts projectsSkills
       projectsSkills.forEach((oneProjectSkill) => {
