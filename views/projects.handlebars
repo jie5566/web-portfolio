@@ -1,6 +1,12 @@
 <div id="main">
 
   <h1>MY PROJECTS</h1>
+
+  <h2>
+    {{#if isLoggedIn}}
+      Hi,{{name}}! &nbsp; &nbsp;
+    {{/if}}</h2>
+
   <div class="container">
     <div class="columns">
       {{#if dbError}}
