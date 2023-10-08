@@ -97,3 +97,24 @@ a.important {
 #new {
   color: #af1d1d;
 }
+.form-input {
+  max-width: 50%;
+  background: #cbcbcb;
+}
+.form-input:not(:placeholder-shown):invalid {
+  border-color: black;
+}
+
+input[type="submit"] {
+  background-color: #aa0404;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: inline-start;
+}
+.form-select {
+  width: 50%;
+  background: #cbcbcb;
+}
