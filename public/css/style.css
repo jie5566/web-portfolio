@@ -2,11 +2,11 @@
   margin: 0;
   padding: 0;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  box-sizing: content-box;
   background-color: #cbcbcb;
+  box-sizing: border-box;
 }
 .intro {
-  font-size: 1.8em;
+  font-size: 1.5em;
 }
 .person-img {
   margin-top: 3%;
@@ -24,7 +24,7 @@ nav {
   text-align: center;
   padding-right: 1.5em;
 }
-.menu a {
+.btn.btn-link {
   text-decoration: none;
   color: black;
 }
@@ -50,7 +50,6 @@ footer div {
   margin-bottom: 2%;
   margin-top: 2%;
   padding: 2%;
-  box-sizing: content-box;
 }
 
 #main h1 {
@@ -79,16 +78,22 @@ footer div {
 .columns {
   box-sizing: border-box;
 }
-
-/* .card-image {
-  height: 23vh;
-  width: 100%;
-  object-fit: cover;
-  border-radius: 2%;
+.card-footer a {
+  color: black;
 }
-.card {
-  width: 25vw;
-  height: 20vh;
-  margin-top: 10%;
-  gap: 5%;
-} */
+a.important {
+  color: #af1d1d;
+}
+
+.card-image {
+  height: auto;
+  width: 100%;
+  object-fit: contain;
+}
+#login {
+  color: #af1d1d;
+}
+
+#new {
+  color: #af1d1d;
+}

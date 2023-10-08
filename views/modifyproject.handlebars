@@ -1,0 +1,44 @@
+<div id="main">
+
+  <h1>MODIFY PROJECTS</h1>
+
+  <h2>
+    {{#if isLoggedIn}}
+      Hi,{{name}}! &nbsp; &nbsp;
+    {{/if}}</h2>
+
+  <div class="container">
+    {{#if isLoggedIn}}
+      {{#if isAdmin}}
+        <form action="/projects/update/{{project.pid}}" method="post">
+        <fieldset>
+            <label for="projname">Project name: </label>
+            <input type="text" name="projname" id="projname" required="required">
+            <br>
+            <textarea name="projdesc" id="projdesc" cols="30" rows="10" required="required">{{project.pdesc}}</textarea>
+            <br>
+            <label for="projtype">Project type: </label>
+            <select name="projtype" id="project" required="required">
+                <option value="Programming">Programming</option>
+                <option value="Design">Design</option>
+                <option value="Website">Website</option>
+                <option value="Other">Other</option>
+            </select>
+            <br>
+            <label for="projimg">Project image URL: </label>
+            <input type="text" name="projimg" id="projimg" placeholder="/img/" required="required">
+            <br>
+        </fieldset>
+        <input type="submit" value="Add project">
+        </form>
+         {{else}}
+         <p>Sorry, you must be an administrator to add a new project!</p>
+         {{/if}}
+     {{else}}
+       <p>
+         Sorry, you must login to add a new project!
+       </p>
+     {{/if}}
+    </div>
+  </div>
+</div>

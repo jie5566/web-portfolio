@@ -275,13 +275,13 @@ app.post("/login", (req, res) => {
 
   if (un == "jie" && pw == "123") {
     console.log("jie here");
-    req, (session.isAdmin = true);
+    req.session.isAdmin = true;
     req.session.isLoggedIn = true;
     req.session.name = "Jie";
     res.redirect("/");
   } else {
     console.log("bad user");
-    req, (session.isAdmin = false);
+    req.session.isAdmin = false;
     req.session.isLoggedIn = false;
     req.session.name = "";
     res.redirect("/login");
@@ -329,7 +329,7 @@ app.get("/login", (req, res) => {
   res.render("login.handlebars", model);
 });
 
-// renders a view WITH DATA!!!
+// renders a view WITH peoject DATA in projects
 app.get("/projects", (req, res) => {
   db.all("SELECT * FROM projects", function (error, theProjects) {
     if (error) {
@@ -337,6 +337,9 @@ app.get("/projects", (req, res) => {
         dbError: true,
         theError: error,
         projects: [],
+        isLoggedIn: req.session.isLoggedIn,
+        name: req.session.name,
+        isAdmin: req.session.isAdmin,
       };
       // renders the page with the model
       res.render("projects.handlebars", model);
@@ -345,18 +348,91 @@ app.get("/projects", (req, res) => {
         dbError: false,
         theError: "",
         projects: theProjects,
+        isLoggedIn: req.session.isLoggedIn,
+        name: req.session.name,
+        isAdmin: req.session.isAdmin,
       };
       // renders the page with the model
       res.render("projects.handlebars", model);
     }
   });
+});
 
-  const model = {
-    isLoggedIn: req.session.isLoggedIn,
-    name: req.session.name,
-    isAdmin: req.session.isAdmin,
-  };
-  res.render("contact.handlebars", model);
+//delete a project
+app.get("/projects/delete/:id", (req, res) => {
+  const id = req.params.id;
+  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
+    db.run(
+      "DELETE FROM projects WHERE pid=?",
+      [id],
+      function (error, theProjects) {
+        if (error) {
+          const model = {
+            dbError: true,
+            theError: error,
+            isLoggedIn: req.session.isLoggedIn,
+            name: req.session.name,
+            isAdmin: req.session.isAdmin,
+          };
+          // renders the page with the model
+          res.render("home.handlebars", model);
+        } else {
+          const model = {
+            dbError: false,
+            theError: "",
+            isLoggedIn: req.session.isLoggedIn,
+            name: req.session.name,
+            isAdmin: req.session.isAdmin,
+          };
+          // renders the page with the model
+          res.render("home.handlebars", model);
+        }
+      }
+    );
+  } else {
+    res.redirect("/login");
+  }
+});
+
+//sends the form for a new project
+app.get("/projects/new", (req, res) => {
+  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
+    const model = {
+      isLoggedIn: req.session.isLoggedIn,
+      name: req.session.name,
+      isAdmin: req.session.isAdmin,
+    };
+    res.render("newproject.handlebars", model);
+  } else {
+    res.redirect("/login");
+  }
+});
+
+//create a new project
+app.post("/projects/new", (req, res) => {
+  const newp = [
+    req.body.projname,
+    req.body.projdesc,
+    req.body.projtype,
+    req.body.projimg,
+  ];
+
+  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
+    db.run(
+      "Insert into PROJECTS (pname, pdesc, ptype,pimgURL) VALUES (?, ?, ?, ?)",
+      newp,
+      (error) => {
+        if (error) {
+          console.log("ERROR: ", error);
+        } else {
+          console.log("Line added into the projects table!");
+        }
+        res.render("/projects");
+      }
+    );
+  } else {
+    res.redirect("/login");
+  }
 });
 
 // sends back a SVG image if asked for "/favicon.ico"
