@@ -1,0 +1,24 @@
+<div id="main">
+  <div class="projects-by-skill">
+    <h1>Projects by Skill</h1>
+    {{#if isLoggedIn}}
+      Hi,
+      {{name}}!
+    {{/if}}
+    <br /><br />
+    {{#if dbError}}
+      <p>Error: {{theError}}</p>
+    {{else}}
+      {{#if projects.length}}
+        <h2>Projects for this Skill:</h2>
+        <ul>
+          {{#each projects}}
+            <li>{{this.pname}}</li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p>No projects found for this skill.</p>
+      {{/if}}
+    {{/if}}
+  </div>
+</div>

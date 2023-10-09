@@ -22,6 +22,7 @@
         {{#each projects}}
           <div class="column col-3 col-md-6 col-sm-12">
             <div class="card">
+            <a href="/skills/project/{{pid}}">
               <div class="card-image">
                 <img
                   src="{{pimgURL}}"
@@ -29,11 +30,13 @@
                   class="img-responsive"
                 />
               </div>
+              </a>
               <div class="card-header">
                 <div class="card-title h3">{{pname}}</div>
                 <div class="card-subtitle text-black">{{ptype}}</div>
                 <div class="card-subtitle text-black">{{pdesc}}</div>
               </div>
+              
               <div class="card-footer">
                 {{#if ../isAdmin}}
                 <div>

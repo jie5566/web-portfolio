@@ -14,6 +14,11 @@
     <h2>I'm skilled in:</h2>
     <br />
     <ul>
+      {{#each skills}}
+        <li><a href='/projects/skills/{{sid}}'>{{sname}}</a> - ({{spro}})</li>
+      {{/each}}
+    </ul>
+    <ul>
       <li>Front-end web development (HTML, CSS, JavaScript)</li>
       <li>Back-end development (Node.js, Express)</li>
       <li>Database management (SQLite3)</li>
