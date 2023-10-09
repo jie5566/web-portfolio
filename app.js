@@ -402,7 +402,6 @@ app.get("/projects/update/:id", (req, res) => {
         };
         // renders the page with the model
         res.render("modifyproject.handlebars", model);
-        // res.redirect("/projects");
       }
     }
   );
@@ -428,7 +427,8 @@ app.post("/projects/update/:id", (req, res) => {
         } else {
           console.log("Project updated!");
         }
-        res.redirect("/peojects");
+        // res.render("home.handlebars", model);
+        res.redirect("/projects");
       }
     );
   } else {
