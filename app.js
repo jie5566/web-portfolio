@@ -358,6 +358,84 @@ app.get("/projects", (req, res) => {
   });
 });
 
+//modify a project
+app.get("/projects/update/:id", (req, res) => {
+  const id = req.params.id;
+
+  db.get(
+    "SELECT * FROM projects WHERE pid=?",
+    [id],
+    function (error, theproject) {
+      if (error) {
+        console.log("ERROR: ", error);
+        const model = {
+          dbError: true,
+          theError: error,
+          isLoggedIn: req.session.isLoggedIn,
+          name: req.session.name,
+          isAdmin: req.session.isAdmin,
+        };
+        // renders the page with the model
+        res.render("modifyproject.handlebars", model);
+      } else {
+        const model = {
+          project: theproject,
+          dbError: false,
+          theError: "",
+          isLoggedIn: req.session.isLoggedIn,
+          name: req.session.name,
+          isAdmin: req.session.isAdmin,
+          helpers: {
+            theTypeG(value) {
+              return value == "Game";
+            },
+            theTypeD(value) {
+              return value == "Design";
+            },
+            theTypeW(value) {
+              return value == "Website";
+            },
+            theTypeO(value) {
+              return value == "Other";
+            },
+          },
+        };
+        // renders the page with the model
+        res.render("modifyproject.handlebars", model);
+        // res.redirect("/projects");
+      }
+    }
+  );
+});
+
+//modify an existing project
+app.post("/projects/update/:id", (req, res) => {
+  const id = req.params.id; //gets the id from the dynamic parameter in the route
+  const newp = [
+    req.body.projname,
+    req.body.projdesc,
+    req.body.projtype,
+    req.body.projimg,
+    id,
+  ];
+  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
+    db.run(
+      "UPDATE projects SET pname =?, pdesc=?, ptype=?,pimgURL=? WHERE pid=?",
+      newp,
+      (error) => {
+        if (error) {
+          console.log("ERROR: ", error);
+        } else {
+          console.log("Project updated!");
+        }
+        res.redirect("/peojects");
+      }
+    );
+  } else {
+    res.redirect("/login");
+  }
+});
+
 //delete a project
 app.get("/projects/delete/:id", (req, res) => {
   const id = req.params.id;
@@ -386,6 +464,7 @@ app.get("/projects/delete/:id", (req, res) => {
           };
           // renders the page with the model
           res.render("home.handlebars", model);
+          res.redirect("/projects");
         }
       }
     );
@@ -427,7 +506,8 @@ app.post("/projects/new", (req, res) => {
         } else {
           console.log("Line added into the projects table!");
         }
-        res.render("/projects");
+        res.render("home.handlebars");
+        res.redirect("/projects");
       }
     );
   } else {

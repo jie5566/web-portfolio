@@ -73,7 +73,7 @@ footer div {
   color: black;
 }
 .container {
-  margin-right: 0px;
+  margin-bottom: 5%;
 }
 .columns {
   box-sizing: border-box;
@@ -86,7 +86,7 @@ a.important {
 }
 
 .card-image {
-  height: auto;
+  height: 25vh;
   width: 100%;
   object-fit: contain;
 }
