@@ -1,0 +1,60 @@
+<div id="main">
+  <h1>Project Details</h1>
+
+  <h2>
+    {{#if isLoggedIn}}
+      Hi,
+      {{name}}!
+    {{/if}}
+  </h2>
+
+  <div class="container">
+    <div class="columns">
+      {{#if dbError}}
+        <div>
+          Sorry, there was a problem with the database:<br />
+          {{theError}}
+        </div>
+      {{else}}
+        {{#if project}}
+          <div class="column col-12">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title h3">{{project.pname}}</div>
+                <div class="card-subtitle text-black">{{project.ptype}}</div>
+                <div class="card-subtitle text-black">{{project.pdesc}}</div>
+              </div>
+              <div class="card-body">
+                <img
+                  src="{{project.pimgURL}}"
+                  alt="{{project.pname}}"
+                  class="img-responsive"
+                />
+                <br />
+                <h3>Skills Used:</h3>
+                <ul>
+                  {{#each skills}}
+                    <li>{{this.sname}}</li>
+                  {{/each}}
+                </ul>
+              </div>
+              <div class="card-footer">
+                {{#if isAdmin}}
+                  <div>
+                    <a href="/projects/update/{{project.pid}}">Modify</a>
+                    <a
+                      href="/projects/delete/{{project.pid}}"
+                      class="important"
+                    >Delete</a>
+                  </div>
+                {{/if}}
+              </div>
+            </div>
+          </div>
+        {{else}}
+          <p>Project not found.</p>
+        {{/if}}
+      {{/if}}
+    </div>
+  </div>
+</div>

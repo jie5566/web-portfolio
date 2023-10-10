@@ -344,35 +344,6 @@ app.post("/projects/new", (req, res) => {
   }
 });
 
-// renders a view WITH peoject DATA in projects
-// app.get("/projects", (req, res) => {
-//   db.all("SELECT * FROM projects", function (error, theProjects) {
-//     if (error) {
-//       const model = {
-//         dbError: true,
-//         theError: error,
-//         projects: [],
-//         isLoggedIn: req.session.isLoggedIn,
-//         name: req.session.name,
-//         isAdmin: req.session.isAdmin,
-//       };
-//       // renders the page with the model
-//       res.render("projects.handlebars", model);
-//     } else {
-//       const model = {
-//         dbError: false,
-//         theError: "",
-//         projects: theProjects,
-//         isLoggedIn: req.session.isLoggedIn,
-//         name: req.session.name,
-//         isAdmin: req.session.isAdmin,
-//       };
-//       // renders the page with the model
-//       res.render("projects.handlebars", model);
-//     }
-//   });
-// });
-
 // In route handler for /about
 // Add this route after other routes in app.js
 app.get("/projects/skills/:id", (req, res) => {
@@ -407,14 +378,14 @@ app.get("/projects/skills/:id", (req, res) => {
   );
 });
 
-app.get("/skills/project/:id", (req, res) => {
+app.get("/projects/details/:id", (req, res) => {
   const projectId = req.params.id;
 
-  // Query the database to get projects related to the selected skill
-  db.all(
-    "SELECT skills.* FROM projectsSkills JOIN skills ON projectsSkills.sid = skills.sid WHERE projectsSkills.pid = ?",
+  // Query the database to get project details
+  db.get(
+    "SELECT * FROM projects WHERE pid = ?",
     [projectId],
-    function (error, theSkills) {
+    function (error, project) {
       if (error) {
         const model = {
           dbError: true,
@@ -423,21 +394,84 @@ app.get("/skills/project/:id", (req, res) => {
           name: req.session.name,
           isAdmin: req.session.isAdmin,
         };
-        res.render("skillsforproject.handlebars", model);
+        res.render("projectDetails.handlebars", model);
+      } else if (project) {
+        // Query the database to get skills associated with the project
+        db.all(
+          "SELECT skills.* FROM projectsSkills JOIN skills ON projectsSkills.sid = skills.sid WHERE projectsSkills.pid = ?",
+          [projectId],
+          function (error, skills) {
+            if (error) {
+              const model = {
+                dbError: true,
+                theError: error,
+                isLoggedIn: req.session.isLoggedIn,
+                name: req.session.name,
+                isAdmin: req.session.isAdmin,
+              };
+              res.render("projectDetails.handlebars", model);
+            } else {
+              const model = {
+                dbError: false,
+                theError: "",
+                project: project,
+                skills: skills,
+                isLoggedIn: req.session.isLoggedIn,
+                name: req.session.name,
+                isAdmin: req.session.isAdmin,
+              };
+              res.render("projectDetails.handlebars", model);
+            }
+          }
+        );
       } else {
+        // Project not found
         const model = {
           dbError: false,
           theError: "",
-          skills: theSkills,
+          project: null,
+          skills: [],
           isLoggedIn: req.session.isLoggedIn,
           name: req.session.name,
           isAdmin: req.session.isAdmin,
         };
-        res.render("skillsforproject.handlebars", model);
+        res.render("project-details.handlebars", model);
       }
     }
   );
 });
+
+// app.get("/skills/project/:id", (req, res) => {
+//   const projectId = req.params.id;
+
+//   // Query the database to get skills related to the project
+//   db.all(
+//     "SELECT skills.* FROM projectsSkills JOIN skills ON projectsSkills.sid = skills.sid WHERE projectsSkills.pid = ?",
+//     [projectId],
+//     function (error, theSkills) {
+//       if (error) {
+//         const model = {
+//           dbError: true,
+//           theError: error,
+//           isLoggedIn: req.session.isLoggedIn,
+//           name: req.session.name,
+//           isAdmin: req.session.isAdmin,
+//         };
+//         res.render("skillsforproject.handlebars", model);
+//       } else {
+//         const model = {
+//           dbError: false,
+//           theError: "",
+//           skills: theSkills,
+//           isLoggedIn: req.session.isLoggedIn,
+//           name: req.session.name,
+//           isAdmin: req.session.isAdmin,
+//         };
+//         res.render("skillsforproject.handlebars", model);
+//       }
+//     }
+//   );
+// });
 
 // sends back a SVG image if asked for "/favicon.ico"
 app.get("/favicon.ico", (req, res) => {
