@@ -1,0 +1,34 @@
+<div id="main">
+  <h1>Edit Profile</h1>
+
+  {{#if isLoggedIn}}
+    Hi,{{name}}!
+  {{/if}}
+
+  <!-- Form for updating profile information -->
+  {{#if isLoggedIn}}
+    <form method="POST" action="/profile">
+      <label for="email">Email:</label>
+      <input
+        type="text"
+        id="email"
+        name="email"
+        value="{{contacts.email}}"
+        required
+      />
+
+      <label for="phone">Phone:</label>
+      <input
+        type="text"
+        id="phone"
+        name="phone"
+        value="{{contacts.phone}}"
+        required
+      />
+
+      <button type="submit">Update Profile</button>
+    </form>
+  {{else}}
+    <p>You must be logged in to access this page.</p>
+  {{/if}}
+</div>

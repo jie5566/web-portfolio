@@ -1,0 +1,43 @@
+<div id="main">
+  <div class="userContainer">
+    <h1>Projects by Skill</h1>
+    {{#if isLoggedIn}}
+      Hi,
+      {{name}}!
+    {{/if}}
+    <br>
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>isAdmin</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each users}}
+                <tr>
+                    <td>{{uid}}</td>
+                    <td>{{uname}}</td>
+                    <td>{{uUsername}}</td>
+                    <td>{{password}}</td>
+                    <td>{{isAdmin}}</td>
+                    
+                {{#if ../isAdmin}}
+                <td>
+                  <a href="/projects/update/{{uId}}">Modify</a>
+                  <a href="/projects/delete/{{uId}}" class="important" >Delete</a>
+                </td>
+                {{/if}}
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+    </div>
+  </div>
+
+</div>

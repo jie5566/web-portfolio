@@ -31,6 +31,11 @@
                   class="img-responsive"
                 />
                 <br />
+                {{#if project.pURL}}
+                  <a id="github" href="{{project.pURL}}">Github link</a>
+                {{/if}}
+                <br />
+                <br />
                 <h3>Skills Used:</h3>
                 <ul>
                   {{#each skills}}

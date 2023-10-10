@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const connectSqlite3 = require("connect-sqlite3");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 
 const sqlite3 = require("sqlite3");
 
@@ -59,24 +60,64 @@ app.use((req, res, next) => {
 ROUTES
 ***/
 
-//check the login and password of a user
+// check the login and password of a user
+// app.post("/login", (req, res) => {
+//   const un = req.body.un;
+//   const pw = req.body.pw;
+
+//   if (un == "jie" && pw == "123") {
+//     console.log("jie here");
+//     req.session.isAdmin = true;
+//     req.session.isLoggedIn = true;
+//     req.session.name = "Jie";
+//     res.redirect("/");
+//   } else {
+//     console.log("bad user");
+//     req.session.isAdmin = false;
+//     req.session.isLoggedIn = false;
+//     req.session.name = "";
+//     res.redirect("/login");
+//   }
+// });
+
 app.post("/login", (req, res) => {
   const un = req.body.un;
   const pw = req.body.pw;
 
-  if (un == "jie" && pw == "123") {
-    console.log("jie here");
-    req.session.isAdmin = true;
-    req.session.isLoggedIn = true;
-    req.session.name = "Jie";
-    res.redirect("/");
-  } else {
-    console.log("bad user");
-    req.session.isAdmin = false;
-    req.session.isLoggedIn = false;
-    req.session.name = "";
-    res.redirect("/login");
-  }
+  db.get("SELECT * FROM users WHERE username = ?", [un], (err, user) => {
+    if (err) {
+      console.error("Error querying the database:", err);
+      res.redirect("/login"); // Handle the error by redirecting to the login page
+    } else if (user) {
+      // User found in the database, now compare passwords
+      bcrypt.compare(pw, user.password, (err, result) => {
+        if (err) {
+          console.error("Error comparing passwords:", err);
+          res.redirect("/login"); // Handle the error by redirecting to the login page
+        } else if (result) {
+          // Passwords match
+          req.session.userId = user.uid;
+          req.session.username = user.username;
+          req.session.isAdmin = user.isAdmin;
+          req.session.isLoggedIn = true;
+          req.session.name = user.uname;
+          res.redirect("/");
+        } else {
+          // Passwords do not match
+          req.session.isAdmin = false;
+          req.session.isLoggedIn = false;
+          req.session.name = "";
+          res.redirect("/login");
+        }
+      });
+    } else {
+      // User not found
+      req.session.isAdmin = false;
+      req.session.isLoggedIn = false;
+      req.session.name = "";
+      res.redirect("/login");
+    }
+  });
 });
 
 // renders a view with DATA, reder in homepage
@@ -89,16 +130,26 @@ app.get("/", (req, res) => {
   res.render("home.handlebars", model);
 });
 
-// renders a view with DATA, render in about
-// app.get("/about", (req, res) => {
-//   const model = {
-//     isLoggedIn: req.session.isLoggedIn,
-//     name: req.session.name,
-//     isAdmin: req.session.isAdmin,
-//   };
-//   res.render("about.handlebars", model);
-//   console.log("SESSION:", session);
-// });
+//security
+app.get("/", (req, res) => {
+  console.log("SESSION: ", req.session);
+
+  // saltRound = 12;
+  // bcrypt.hash("123", saltRound, function (err, hash) {
+  //   if (err) {
+  //     console.log("Error encrypting the password: ", err);
+  //   } else {
+  //     console.log("Hashed password (GENERATE only ONCE): ", hash);
+  //   }
+  // });
+
+  const model = {
+    isLoggedIn: req.session.isLoggedIn,
+    name: req.session.name,
+    isAdmin: req.session.isAdmin,
+  };
+  res.render("home.handlebars", model);
+});
 
 app.get("/about", (req, res) => {
   db.all("SELECT * FROM skills", function (error, theSkills) {
@@ -325,7 +376,7 @@ app.post("/projects/new", (req, res) => {
     req.body.projimg,
   ];
 
-  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
+  if (req.session.isLoggedIn === true && req.session.isAdmin === true) {
     db.run(
       "Insert into PROJECTS (pname, pdesc, ptype,pimgURL) VALUES (?, ?, ?, ?)",
       newp,
@@ -441,37 +492,104 @@ app.get("/projects/details/:id", (req, res) => {
   );
 });
 
-// app.get("/skills/project/:id", (req, res) => {
-//   const projectId = req.params.id;
+app.get("/userManager", function (req, res) {
+  if (req.session.isLoggedIn === true && req.session.isAdmin === true) {
+    db.all("SELECT * FROM users", function (error, theUsers) {
+      if (error) {
+        const model = {
+          dbError: true,
+          theError: error,
+          users: [],
+          isAdmin: req.session.isAdmin,
+          isLoggedIn: req.session.isLoggedIn,
+          role: req.session.role,
+        };
 
-//   // Query the database to get skills related to the project
-//   db.all(
-//     "SELECT skills.* FROM projectsSkills JOIN skills ON projectsSkills.sid = skills.sid WHERE projectsSkills.pid = ?",
-//     [projectId],
-//     function (error, theSkills) {
-//       if (error) {
-//         const model = {
-//           dbError: true,
-//           theError: error,
-//           isLoggedIn: req.session.isLoggedIn,
-//           name: req.session.name,
-//           isAdmin: req.session.isAdmin,
-//         };
-//         res.render("skillsforproject.handlebars", model);
-//       } else {
-//         const model = {
-//           dbError: false,
-//           theError: "",
-//           skills: theSkills,
-//           isLoggedIn: req.session.isLoggedIn,
-//           name: req.session.name,
-//           isAdmin: req.session.isAdmin,
-//         };
-//         res.render("skillsforproject.handlebars", model);
-//       }
-//     }
-//   );
-// });
+        res.render("userManager.handlebars", model);
+      } else {
+        const model = {
+          dbError: false,
+          theError: "",
+          users: theUsers,
+          isAdmin: req.session.isAdmin,
+          isLoggedIn: req.session.isLoggedIn,
+          role: req.session.role,
+        };
+
+        res.render("userManager.handlebars", model);
+      }
+    });
+  } else {
+    console.log("You are not Logged In");
+    //alert user here
+    res.redirect("/login");
+  }
+});
+
+//change users profile
+
+app.get("/profile", function (req, res) {
+  if (req.session.isLoggedIn == true) {
+    db.all("SELECT * FROM contacts", function (error, theContacts) {
+      if (error) {
+        const model = {
+          dbError: true,
+          theError: error,
+          contacts: [],
+          isAdmin: req.session.isAdmin,
+          isLoggedIn: req.session.isLoggedIn,
+          role: req.session.role,
+        };
+
+        res.render("profile.handlebars", model);
+      } else {
+        const model = {
+          dbError: false,
+          theError: "",
+          contacts: theContacts,
+          isAdmin: req.session.isAdmin,
+          isLoggedIn: req.session.isLoggedIn,
+          role: req.session.role,
+        };
+
+        res.render("profile.handlebars", model);
+      }
+    });
+  } else {
+    console.log("You are not Logged In");
+    //alert user here
+    res.redirect("/login");
+  }
+});
+
+app.post("/profile", (req, res) => {
+  if (req.session.isLoggedIn) {
+    // Get user data from the form
+    const updatedPhone = req.body.phone;
+    const updatedEmail = req.body.email;
+
+    // // Update user's phone and email in the database
+    // db.run(
+    //   "UPDATE contacts SET phone = ?, email = ? WHERE cid = ?",
+    //   [updatedPhone, updatedEmail, req.session.username],
+    //   (error) => {
+    //     if (error) {
+    //       console.log("Error updating user profile:", error);
+    //       // Handle the error, perhaps by rendering an error page
+    //       // or redirecting to a profile page with an error message.
+    //       res.redirect("/profile"); // Redirect back to the profile page with an error message
+    //     } else {
+    //       console.log("User profile updated successfully");
+    //       // Redirect to the user's profile page or another suitable destination
+    //       res.redirect("/profile");
+    //     }
+    //   }
+    // );
+  } else {
+    // User is not logged in, handle this case accordingly
+    res.redirect("/login");
+  }
+});
 
 // sends back a SVG image if asked for "/favicon.ico"
 app.get("/favicon.ico", (req, res) => {

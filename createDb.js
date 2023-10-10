@@ -18,6 +18,7 @@ db.run(
           type: "Game",
           desc: "It is a fun game, people need to land the rocket before the fuel finishs.",
           url: "/img/lunarlander.png",
+          purl: "https://ju-nmd2022.github.io/fop-lunar-lander-jie5566/",
         },
         {
           id: "2",
@@ -25,6 +26,7 @@ db.run(
           type: "Game",
           desc: "Try to survive as long as possible, the hen eats worms, and make small chicken, avoid the fox!",
           url: "/img/chickenSurvive.png",
+          purl: "https://ju-nmd2022.github.io/fop-final-project-project-14/",
         },
         {
           id: "3",
@@ -32,6 +34,7 @@ db.run(
           type: "website",
           desc: "It is an useful tool to manage your day.",
           url: "/img/todo.png",
+          purl: "https://ju-nmd2022.github.io/fop-todo-list-jie5566/",
         },
         {
           id: "4",
@@ -39,6 +42,7 @@ db.run(
           type: "Website",
           desc: "It is a group project, we build up an Asian food website.",
           url: "/img/recipe.png",
+          purl: "https://ju-nmd2022.github.io/wuid-project-group-17/",
         },
         {
           id: "5",
@@ -72,13 +76,14 @@ db.run(
       // inserts projects
       projects.forEach((oneProject) => {
         db.run(
-          "INSERT or REPLACE INTO projects (pid, pname, pdesc, ptype, pimgURL) VALUES (?, ?, ?, ?, ?)",
+          "INSERT or REPLACE INTO projects (pid, pname, pdesc, ptype, pimgURL, pURL) VALUES (?, ?, ?, ?, ?, ?)",
           [
             oneProject.id,
             oneProject.name,
             oneProject.desc,
             oneProject.type,
             oneProject.url,
+            oneProject.purl,
           ],
           (error) => {
             if (error) {
@@ -240,6 +245,147 @@ db.run(
               console.log("ERROR: ", error);
             } else {
               console.log("Line added into the projectsSkills table!");
+            }
+          }
+        );
+      });
+    }
+  }
+);
+
+// creates usertable at startup
+db.run(
+  "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY, uname TEXT NOT NULL, username TEXT NOT NULL, password TEXT NOT NULL, isAdmin BOOLEAN , contact_id INTEGER, FOREIGN KEY (contact_id) REFERENCES contacts(cid))",
+  (error) => {
+    if (error) {
+      // tests error: display error
+      console.log("ERROR: ", error);
+    } else {
+      // tests error: no error, the table has been created
+      console.log("---> Table users created!");
+
+      const users = [
+        {
+          id: "1",
+          name: "Jie Chen",
+          username: "jie",
+          password:
+            "$2b$12$qWAJwMQBrVD7QHZXfLBQN.f8VLUw1vnORZu9iBxJ1zhUe6H.QOo.q",
+          isAdmin: true,
+          contact_id: 1,
+        },
+        {
+          id: "2",
+          name: "Jerôme Landré",
+          username: "jerome",
+          password:
+            "$2b$12$PAZbCpsFs/HRvXCEhaANPuu4dem6GaLQ6dJ/EczeL9s.Zl0rpY5iC",
+          isAdmin: true,
+          contact_id: 2,
+        },
+        {
+          id: "3",
+          name: "Mimi",
+          username: "mimi",
+          password:
+            "$2b$12$d7Qrq7TKNi$2b$12$sa/44NfPaC47rYax7VKkM.tWO9rJvfGDjSklIwxQR2I7bH4wXi/fq1rCEsuEArQR.40phdXHRwd61P7ggniEfJhI9dJztfgu",
+          isAdmin: false,
+          contact_id: 3,
+        },
+        {
+          id: "4",
+          name: "Tom",
+          username: "tom",
+          password:
+            "$2b$12$yjqU7i.HneUk53ZV8U8dK.sQMMljOjKAPrN.zb8XI1LNO9UEBWs3q",
+          isAdmin: false,
+          contact_id: 4,
+        },
+        {
+          id: "5",
+          name: "Jerry",
+          username: "jerry",
+          password:
+            "$2b$12$R5hHJIpJN0/UfItPutzvd.eMMR4YkO2ufHvZw11IizYE0OetaNc1m",
+          isAdmin: false,
+          contact_id: 5,
+        },
+      ];
+
+      // inserts users
+      users.forEach((oneUser) => {
+        db.run(
+          "INSERT or REPLACE INTO users (uid, uname, username, password,isAdmin, contact_id) VALUES (?, ?, ?, ?, ?,?)",
+          [
+            oneUser.id,
+            oneUser.name,
+            oneUser.username,
+            oneUser.password,
+            oneUser.isAdmin,
+            oneUser.contact_id,
+          ],
+          (error) => {
+            if (error) {
+              console.log("ERROR: ", error);
+            } else {
+              console.log("Line added into the users table!");
+            }
+          }
+        );
+      });
+    }
+  }
+);
+
+// creates contact table at startup
+db.run(
+  "CREATE TABLE IF NOT EXISTS contacts (cid INTEGER PRIMARY KEY,  phone TEXT NOT NULL, email TEXT NOT NULL)",
+  (error) => {
+    if (error) {
+      // tests error: display error
+      console.log("ERROR: ", error);
+    } else {
+      // tests error: no error, the table has been created
+      console.log("---> Table contacts created!");
+
+      const contacts = [
+        {
+          id: "1",
+          phone: "070707071",
+          email: "jie@gmail.com",
+        },
+        {
+          id: "2",
+          phone: "070707072",
+          email: "jerome@gmail.com",
+        },
+        {
+          id: "3",
+          phone: "070707073",
+          email: "mimi@gmail.com",
+        },
+        {
+          id: "4",
+          phone: "070707074",
+          email: "tom@gmail.com",
+        },
+        {
+          id: "5",
+          phone: "070707075",
+          email: "jerry@gmail.com",
+        },
+      ];
+
+      // inserts users
+      contacts.forEach((oneContact) => {
+        db.run(
+          "INSERT or REPLACE INTO contacts (cid,  phone, email) VALUES (?, ?, ?)",
+          [oneContact.id, oneContact.phone, oneContact.email],
+          (error) => {
+            if (error) {
+              console.log("ERROR: ", error);
+            } else {
+              console.log("Line added into the users table!");
             }
           }
         );
