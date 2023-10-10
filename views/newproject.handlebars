@@ -10,7 +10,7 @@
   <div class="container" class="form-group">
     {{#if isLoggedIn}}
       {{#if isAdmin}}
-        <form action="/projects/new" method="post">
+        <form class="column col-6 col-md-10 col-sm-12" action="/projects/new" method="post">
         <fieldset>
             <label class="form-label" for="projname">Project name: </label>
             <input class="form-input" type="text" name="projname" id="projname" required="required">

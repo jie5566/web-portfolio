@@ -6,19 +6,45 @@
       {{name}}!
     {{/if}}
     <br /><br />
+    <div class="container">
+      <div class="columns">
     {{#if dbError}}
-      <p>Error: {{theError}}</p>
+      <div>
+        Sorry, there was a problem with the database:<br />
+        {{theError}}
+      </div>
     {{else}}
       {{#if projects.length}}
-        <h2>Projects for this Skill:</h2>
+        {{!-- <h2>Projects for this Skill:</h2>
         <ul>
           {{#each projects}}
             <li>{{this.pname}}</li>
           {{/each}}
-        </ul>
+        </ul> --}}
+          {{#each projects}}
+            <div class="column col-4 col-md-6 col-sm-12">
+              <div class="card">
+                <a href="/skills/project/{{pid}}">
+                  <div class="card-image">
+                    <img
+                      src="{{pimgURL}}"
+                      alt="{{pimgURL}}"
+                      class="img-responsive"
+                    />
+                  </div>
+                </a>
+                <div class="card-header">
+                  <div class="card-title h3">{{pname}}</div>
+                  <div class="card-subtitle text-black">{{ptype}}</div>
+                  <div class="card-subtitle text-black">{{pdesc}}</div>
+                </div>
+                </div>
+              </div>
+             {{/each}}
       {{else}}
         <p>No projects found for this skill.</p>
       {{/if}}
     {{/if}}
+
   </div>
 </div>

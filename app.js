@@ -11,7 +11,6 @@ const cookieParser = require("cookie-parser");
 
 const sqlite3 = require("sqlite3");
 
-
 // MODEL (DATA)
 const db = new sqlite3.Database("projects-jie.db");
 // defines the port
@@ -147,6 +146,16 @@ app.get("/login", (req, res) => {
     isAdmin: req.session.isAdmin,
   };
   res.render("login.handlebars", model);
+});
+
+// logout
+app.get("/logout", function (req, res) {
+  const model = {
+    isAdmin: false,
+    isLoggedIn: false,
+  };
+  req.session.destroy();
+  res.render("home.handlebars", model);
 });
 
 // renders a view WITH peoject DATA in projects
@@ -442,5 +451,5 @@ app.listen(port, () => {
 });
 
 module.exports = {
-  db
-}
+  db,
+};

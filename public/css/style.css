@@ -22,7 +22,7 @@ nav {
   float: right;
   display: inline;
   text-align: center;
-  padding-right: 1.5em;
+  padding-right: 2%;
 }
 .btn.btn-link {
   text-decoration: none;
@@ -89,6 +89,8 @@ a.important {
   height: 25vh;
   width: 100%;
   object-fit: contain;
+  object-position: center;
+  justify-content: center;
 }
 #login {
   color: #af1d1d;
@@ -98,7 +100,6 @@ a.important {
   color: #af1d1d;
 }
 .form-input {
-  max-width: 50%;
   background: #cbcbcb;
 }
 .form-input:not(:placeholder-shown):invalid {
@@ -106,7 +107,7 @@ a.important {
 }
 
 input[type="submit"] {
-  background-color: #aa0404;
+  background-color: #af1d1d;
   color: white;
   padding: 12px 20px;
   border: none;
@@ -117,4 +118,7 @@ input[type="submit"] {
 .form-select {
   width: 50%;
   background: #cbcbcb;
+}
+.about a {
+  color: #af1d1d;
 }
