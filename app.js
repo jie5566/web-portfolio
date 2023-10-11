@@ -209,9 +209,16 @@ app.get("/logout", function (req, res) {
   res.render("home.handlebars", model);
 });
 
-// renders a view WITH peoject DATA in projects
+//pagination
+// Update the /projects route
 app.get("/projects", (req, res) => {
-  db.all("SELECT * FROM projects", function (error, theProjects) {
+  const page = parseInt(req.query.page) || 1; // Get the current page from the query parameter
+  const itemsPerPage = 3; // Number of items to display per page
+
+  const startIndex = (page - 1) * itemsPerPage;
+
+  // Query the database to get the total count of projects
+  db.get("SELECT COUNT(*) AS count FROM projects", [], (error, result) => {
     if (error) {
       const model = {
         dbError: true,
@@ -221,22 +228,82 @@ app.get("/projects", (req, res) => {
         name: req.session.name,
         isAdmin: req.session.isAdmin,
       };
-      // renders the page with the model
       res.render("projects.handlebars", model);
     } else {
-      const model = {
-        dbError: false,
-        theError: "",
-        projects: theProjects,
-        isLoggedIn: req.session.isLoggedIn,
-        name: req.session.name,
-        isAdmin: req.session.isAdmin,
-      };
-      // renders the page with the model
-      res.render("projects.handlebars", model);
+      const totalProjectsCount = result.count;
+
+      // Query the database to get a subset of projects based on pagination
+      db.all(
+        "SELECT * FROM projects LIMIT ? OFFSET ?",
+        [itemsPerPage, startIndex],
+        function (error, theProjects) {
+          if (error) {
+            const model = {
+              dbError: true,
+              theError: error,
+              projects: [],
+              isLoggedIn: req.session.isLoggedIn,
+              name: req.session.name,
+              isAdmin: req.session.isAdmin,
+            };
+            res.render("projects.handlebars", model);
+          } else {
+            const model = {
+              dbError: false,
+              theError: "",
+              projects: theProjects,
+              isLoggedIn: req.session.isLoggedIn,
+              name: req.session.name,
+              isAdmin: req.session.isAdmin,
+              totalPages: Math.ceil(totalProjectsCount / itemsPerPage),
+              notFirstPage: page > 1,
+              notLastPage: page < Math.ceil(totalProjectsCount / itemsPerPage),
+              prevPage: page > 1 ? page - 1 : null,
+              nextPage:
+                page < Math.ceil(totalProjectsCount / itemsPerPage)
+                  ? page + 1
+                  : null,
+              pageNumbers: Array.from(
+                { length: Math.ceil(totalProjectsCount / itemsPerPage) },
+                (_, i) => ({ page: i + 1, isCurrentPage: i + 1 === page })
+              ),
+            };
+            res.render("projects.handlebars", model);
+          }
+        }
+      );
     }
   });
 });
+
+// // renders a view WITH peoject DATA in projects
+// app.get("/projects", (req, res) => {
+//   db.all("SELECT * FROM projects", function (error, theProjects) {
+//     if (error) {
+//       const model = {
+//         dbError: true,
+//         theError: error,
+//         projects: [],
+//         isLoggedIn: req.session.isLoggedIn,
+//         name: req.session.name,
+//         isAdmin: req.session.isAdmin,
+//       };
+//       // renders the page with the model
+//       res.render("projects.handlebars", model);
+//     } else {
+//       const model = {
+//         dbError: false,
+//         theError: "",
+//         projects: theProjects,
+//         isLoggedIn: req.session.isLoggedIn,
+//         name: req.session.name,
+//         isAdmin: req.session.isAdmin,
+//       };
+//       // renders the page with the model
+//       res.render("projects.handlebars", model);
+//     }
+//   });
+// });
 
 //modify a project
 app.get("/projects/update/:id", (req, res) => {
@@ -376,7 +443,7 @@ app.post("/projects/new", (req, res) => {
     req.body.projimg,
   ];
 
-  if (req.session.isLoggedIn === true && req.session.isAdmin === true) {
+  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
     db.run(
       "Insert into PROJECTS (pname, pdesc, ptype,pimgURL) VALUES (?, ?, ?, ?)",
       newp,
@@ -492,69 +559,73 @@ app.get("/projects/details/:id", (req, res) => {
   );
 });
 
-app.get("/userManager", function (req, res) {
-  if (req.session.isLoggedIn === true && req.session.isAdmin === true) {
-    db.all("SELECT * FROM users", function (error, theUsers) {
-      if (error) {
-        const model = {
-          dbError: true,
-          theError: error,
-          users: [],
-          isAdmin: req.session.isAdmin,
-          isLoggedIn: req.session.isLoggedIn,
-          role: req.session.role,
-        };
+// app.get("/userManager", function (req, res) {
+//   if (req.session.isLoggedIn === true && req.session.isAdmin === true) {
+//     db.all("SELECT * FROM users", function (error, theUsers) {
+//       if (error) {
+//         const model = {
+//           dbError: true,
+//           theError: error,
+//           users: [],
+//           isAdmin: req.session.isAdmin,
+//           isLoggedIn: req.session.isLoggedIn,
+//           role: req.session.role,
+//         };
 
-        res.render("userManager.handlebars", model);
-      } else {
-        const model = {
-          dbError: false,
-          theError: "",
-          users: theUsers,
-          isAdmin: req.session.isAdmin,
-          isLoggedIn: req.session.isLoggedIn,
-          role: req.session.role,
-        };
+//         res.render("userManager.handlebars", model);
+//       } else {
+//         const model = {
+//           dbError: false,
+//           theError: "",
+//           users: theUsers,
+//           isAdmin: req.session.isAdmin,
+//           isLoggedIn: req.session.isLoggedIn,
+//           role: req.session.role,
+//         };
 
-        res.render("userManager.handlebars", model);
-      }
-    });
-  } else {
-    console.log("You are not Logged In");
-    //alert user here
-    res.redirect("/login");
-  }
-});
+//         res.render("userManager.handlebars", model);
+//       }
+//     });
+//   } else {
+//     console.log("You are not Logged In");
+//     //alert user here
+//     res.redirect("/login");
+//   }
+// });
 
 //change users profile
 
 app.get("/profile", function (req, res) {
   if (req.session.isLoggedIn == true) {
-    db.all("SELECT * FROM contacts", function (error, theContacts) {
-      if (error) {
-        const model = {
-          dbError: true,
-          theError: error,
-          contacts: [],
-          isAdmin: req.session.isAdmin,
-          isLoggedIn: req.session.isLoggedIn,
-          role: req.session.role,
-        };
+    db.all(
+      "SELECT * FROM contacts WHERE cid = ?",
+      [req.session.username],
+      function (error, theContacts) {
+        if (error) {
+          const model = {
+            dbError: true,
+            theError: error,
+            contacts: [],
+            isAdmin: req.session.isAdmin,
+            name: req.session.name,
+            isLoggedIn: req.session.isLoggedIn,
+          };
 
-        res.render("profile.handlebars", model);
-      } else {
-        const model = {
-          dbError: false,
-          theError: "",
-          contacts: theContacts,
-          isAdmin: req.session.isAdmin,
-          isLoggedIn: req.session.isLoggedIn,
-          role: req.session.role,
-        };
+          res.render("profile.handlebars", model);
+        } else {
+          const model = {
+            dbError: false,
+            theError: "",
+            contacts: theContacts,
+            isAdmin: req.session.isAdmin,
+            name: req.session.name,
+            isLoggedIn: req.session.isLoggedIn,
+          };
 
-        res.render("profile.handlebars", model);
+          res.render("profile.handlebars", model);
+        }
       }
-    });
+    );
   } else {
     console.log("You are not Logged In");
     //alert user here
@@ -562,29 +633,26 @@ app.get("/profile", function (req, res) {
   }
 });
 
-app.post("/profile", (req, res) => {
+app.post("/profile/update/:user", (req, res) => {
   if (req.session.isLoggedIn) {
     // Get user data from the form
     const updatedPhone = req.body.phone;
     const updatedEmail = req.body.email;
 
-    // // Update user's phone and email in the database
-    // db.run(
-    //   "UPDATE contacts SET phone = ?, email = ? WHERE cid = ?",
-    //   [updatedPhone, updatedEmail, req.session.username],
-    //   (error) => {
-    //     if (error) {
-    //       console.log("Error updating user profile:", error);
-    //       // Handle the error, perhaps by rendering an error page
-    //       // or redirecting to a profile page with an error message.
-    //       res.redirect("/profile"); // Redirect back to the profile page with an error message
-    //     } else {
-    //       console.log("User profile updated successfully");
-    //       // Redirect to the user's profile page or another suitable destination
-    //       res.redirect("/profile");
-    //     }
-    //   }
-    // );
+    // Update user's phone and email in the database
+    db.run(
+      "UPDATE contacts SET phone = ?, email = ? WHERE cid = ?",
+      [updatedPhone, updatedEmail, req.session.username],
+      (error) => {
+        if (error) {
+          console.log("ERROR: ", error);
+        } else {
+          console.log("Project updated!");
+        }
+        // res.render("home.handlebars", model);
+        res.redirect("/profile");
+      }
+    );
   } else {
     // User is not logged in, handle this case accordingly
     res.redirect("/login");

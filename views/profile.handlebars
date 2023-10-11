@@ -1,34 +1,41 @@
 <div id="main">
   <h1>Edit Profile</h1>
+  <h2>
+    {{#if isLoggedIn}}
+      Hi,{{name}}!
+    {{/if}}
+  </h2>
+  <div class="form-group" class="container">
+    <!-- Form for updating profile information -->
+    {{#if isLoggedIn}}
+      <form
+        class="column col-6 col-md-10 col-sm-12"
+        method="POST"
+        action="/profile"
+      >
+        <label class="form-label" for="email">Email:</label>
+        <input
+          type="text"
+          id="email"
+          name="email"
+          value="{{contacts.email}}"
+          required
+        />
 
-  {{#if isLoggedIn}}
-    Hi,{{name}}!
-  {{/if}}
-
-  <!-- Form for updating profile information -->
-  {{#if isLoggedIn}}
-    <form method="POST" action="/profile">
-      <label for="email">Email:</label>
-      <input
-        type="text"
-        id="email"
-        name="email"
-        value="{{contacts.email}}"
-        required
-      />
-
-      <label for="phone">Phone:</label>
-      <input
-        type="text"
-        id="phone"
-        name="phone"
-        value="{{contacts.phone}}"
-        required
-      />
-
-      <button type="submit">Update Profile</button>
-    </form>
-  {{else}}
-    <p>You must be logged in to access this page.</p>
-  {{/if}}
+        <label class="form-label" for="phone">Phone:</label>
+        <input
+          type="text"
+          id="phone"
+          name="phone"
+          value="{{contacts.phone}}"
+          required
+        />
+        <br />
+        <br />
+        <input type="submit" value="Update Profile" />
+      </form>
+    {{else}}
+      <p>You must be logged in to access this page.</p>
+    {{/if}}
+  </div>
 </div>

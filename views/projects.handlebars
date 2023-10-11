@@ -48,7 +48,32 @@
             </div>
           </div>
         {{/each}}
+
       {{/if}}
     </div>
+    <!-- Pagination Links -->
+    <div class="pagination">
+      {{#if totalPages}}
+        {{#if notFirstPage}}
+          <a href="/projects?page=1">First</a>
+        {{/if}}
+        {{#if prevPage}}
+          <a href="/projects?page={{prevPage}}">Previous</a>
+        {{/if}}
+        {{#each pageNumbers}}
+          {{#if isCurrentPage}}
+            <span class="current-page">{{page}}</span>
+          {{else}}
+            <a href="/projects?page={{page}}">{{page}}</a>
+          {{/if}}
+        {{/each}}
+        {{#if nextPage}}
+          <a href="/projects?page={{nextPage}}">Next</a>
+        {{/if}}
+        {{#if notLastPage}}
+          <a href="/projects?page={{totalPages}}">Last</a>
+        {{/if}}
+      {{/if}}
+      </div>
   </div>
 </div>

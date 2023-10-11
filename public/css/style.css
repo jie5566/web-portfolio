@@ -128,3 +128,15 @@ input[type="submit"] {
 #profile {
   color: #af1d1d;
 }
+.pagination {
+  display: flex;
+  column-gap: 6px;
+  justify-content: center;
+  list-style: none;
+  margin-top: 2%;
+  padding: 0;
+}
+.pagination a {
+  margin: 0 1px;
+  color: black;
+}
