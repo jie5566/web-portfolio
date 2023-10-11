@@ -128,6 +128,9 @@ input[type="submit"] {
 #profile {
   color: #af1d1d;
 }
+#manager {
+  color: #045a22;
+}
 .pagination {
   display: flex;
   column-gap: 6px;

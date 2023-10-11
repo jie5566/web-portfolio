@@ -20,6 +20,12 @@
             class="btn btn-link to-the-right"
           >Login</a>
         {{/if}}
+        {{#if isAdmin}}
+          <div class="to-the-right">
+            <a id="manager" href="/userManager" class="btn btn-link">User
+              manager</a>
+          </div>
+        {{/if}}
       </section>
     </div>
   </nav>
