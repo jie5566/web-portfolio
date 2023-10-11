@@ -559,39 +559,42 @@ app.get("/projects/details/:id", (req, res) => {
   );
 });
 
-// app.get("/userManager", function (req, res) {
-//   if (req.session.isLoggedIn === true && req.session.isAdmin === true) {
-//     db.all("SELECT * FROM users", function (error, theUsers) {
-//       if (error) {
-//         const model = {
-//           dbError: true,
-//           theError: error,
-//           users: [],
-//           isAdmin: req.session.isAdmin,
-//           isLoggedIn: req.session.isLoggedIn,
-//           role: req.session.role,
-//         };
+//User manager board
 
-//         res.render("userManager.handlebars", model);
-//       } else {
-//         const model = {
-//           dbError: false,
-//           theError: "",
-//           users: theUsers,
-//           isAdmin: req.session.isAdmin,
-//           isLoggedIn: req.session.isLoggedIn,
-//           role: req.session.role,
-//         };
+// Add a route to display user data
+app.get("/userManager", function (req, res) {
+  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
+    db.all("SELECT * FROM users", function (error, theUsers) {
+      if (error) {
+        const model = {
+          dbError: true,
+          theError: error,
+          users: [],
+          name: req.session.name,
+          isAdmin: req.session.isAdmin,
+          isLoggedIn: req.session.isLoggedIn,
+        };
 
-//         res.render("userManager.handlebars", model);
-//       }
-//     });
-//   } else {
-//     console.log("You are not Logged In");
-//     //alert user here
-//     res.redirect("/login");
-//   }
-// });
+        res.render("userManager.handlebars", model);
+      } else {
+        const model = {
+          dbError: false,
+          theError: "",
+          users: theUsers,
+          name: req.session.name,
+          isAdmin: req.session.isAdmin,
+          isLoggedIn: req.session.isLoggedIn,
+        };
+
+        res.render("userManager.handlebars", model);
+      }
+    });
+  } else {
+    console.log("You are not Logged In");
+    // Redirect to the login page or display an error message
+    res.redirect("/login");
+  }
+});
 
 //change users profile
 
@@ -633,7 +636,7 @@ app.get("/profile", function (req, res) {
   }
 });
 
-app.post("/profile/update/:user", (req, res) => {
+app.post("/profile", (req, res) => {
   if (req.session.isLoggedIn) {
     // Get user data from the form
     const updatedPhone = req.body.phone;
