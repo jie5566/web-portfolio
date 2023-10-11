@@ -255,11 +255,11 @@ db.run(
 
 // creates usertable at startup
 db.run(
-  "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY, uname TEXT NOT NULL, username TEXT NOT NULL, password TEXT NOT NULL, isAdmin BOOLEAN , contact_id INTEGER, FOREIGN KEY (contact_id) REFERENCES contacts(cid))",
+  "CREATE TABLE IF NOT EXISTS users (uid INTEGER PRIMARY KEY, uname TEXT NOT NULL, username TEXT NOT NULL, password TEXT NOT NULL, isAdmin BOOLEAN , profile_id INTEGER, FOREIGN KEY (profile_id) REFERENCES profiles(id))",
   (error) => {
     if (error) {
       // tests error: display error
-      console.log("ERROR: ", error);
+      console.log("user table ERROR: ", error);
     } else {
       // tests error: no error, the table has been created
       console.log("---> Table users created!");
@@ -272,7 +272,7 @@ db.run(
           password:
             "$2b$12$qWAJwMQBrVD7QHZXfLBQN.f8VLUw1vnORZu9iBxJ1zhUe6H.QOo.q",
           isAdmin: true,
-          contact_id: 1,
+          profile_id: 1,
         },
         {
           id: "2",
@@ -281,16 +281,16 @@ db.run(
           password:
             "$2b$12$PAZbCpsFs/HRvXCEhaANPuu4dem6GaLQ6dJ/EczeL9s.Zl0rpY5iC",
           isAdmin: true,
-          contact_id: 2,
+          profile_id: 2,
         },
         {
           id: "3",
           name: "Mimi",
           username: "mimi",
           password:
-            "$2b$12$d7Qrq7TKNi$2b$12$sa/44NfPaC47rYax7VKkM.tWO9rJvfGDjSklIwxQR2I7bH4wXi/fq1rCEsuEArQR.40phdXHRwd61P7ggniEfJhI9dJztfgu",
+            "$2b$12$d7Qrq7TKNi$2b$12$sa/44NfPaC47rYax7VKkM.tWO9rJvJztfgu",
           isAdmin: false,
-          contact_id: 3,
+          profile_id: 3,
         },
         {
           id: "4",
@@ -299,7 +299,7 @@ db.run(
           password:
             "$2b$12$yjqU7i.HneUk53ZV8U8dK.sQMMljOjKAPrN.zb8XI1LNO9UEBWs3q",
           isAdmin: false,
-          contact_id: 4,
+          profile_id: 4,
         },
         {
           id: "5",
@@ -308,25 +308,25 @@ db.run(
           password:
             "$2b$12$R5hHJIpJN0/UfItPutzvd.eMMR4YkO2ufHvZw11IizYE0OetaNc1m",
           isAdmin: false,
-          contact_id: 5,
+          profile_id: 5,
         },
       ];
 
       // inserts users
       users.forEach((oneUser) => {
         db.run(
-          "INSERT or REPLACE INTO users (uid, uname, username, password,isAdmin, contact_id) VALUES (?, ?, ?, ?, ?,?)",
+          "INSERT or REPLACE INTO users (uid, uname, username, password,isAdmin, profile_id) VALUES (?, ?, ?, ?, ?,?)",
           [
             oneUser.id,
             oneUser.name,
             oneUser.username,
             oneUser.password,
             oneUser.isAdmin,
-            oneUser.contact_id,
+            oneUser.profile_id,
           ],
           (error) => {
             if (error) {
-              console.log("ERROR: ", error);
+              console.log("user ERROR: ", error);
             } else {
               console.log("Line added into the users table!");
             }
@@ -339,16 +339,16 @@ db.run(
 
 // creates contact table at startup
 db.run(
-  "CREATE TABLE IF NOT EXISTS contacts (cid INTEGER PRIMARY KEY,  phone TEXT NOT NULL, email TEXT NOT NULL)",
+  "CREATE TABLE IF NOT EXISTS profiles (id INTEGER PRIMARY KEY,  phone TEXT, email TEXT)",
   (error) => {
     if (error) {
       // tests error: display error
-      console.log("ERROR: ", error);
+      console.log("profile table ERROR: ", error);
     } else {
       // tests error: no error, the table has been created
-      console.log("---> Table contacts created!");
+      console.log("---> Table profiles created!");
 
-      const contacts = [
+      const profiles = [
         {
           id: "1",
           phone: "070707071",
@@ -377,13 +377,13 @@ db.run(
       ];
 
       // inserts users
-      contacts.forEach((oneContact) => {
+      profiles.forEach((profile) => {
         db.run(
-          "INSERT or REPLACE INTO contacts (cid,  phone, email) VALUES (?, ?, ?)",
-          [oneContact.id, oneContact.phone, oneContact.email],
+          "INSERT or REPLACE INTO profiles (id,  phone, email) VALUES (?, ?, ?)",
+          [profile.id, profile.phone, profile.email],
           (error) => {
             if (error) {
-              console.log("ERROR: ", error);
+              console.log("profile ERROR: ", error);
             } else {
               console.log("Line added into the users table!");
             }

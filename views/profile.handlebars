@@ -8,6 +8,7 @@
   <div class="form-group" class="container">
     <!-- Form for updating profile information -->
     {{#if isLoggedIn}}
+    {{#each profile}}
       <form
         class="column col-6 col-md-10 col-sm-12"
         method="POST"
@@ -18,7 +19,7 @@
           type="text"
           id="email"
           name="email"
-          value="{{contacts.email}}"
+          value="{{email}}"
           required
         />
 
@@ -27,13 +28,14 @@
           type="text"
           id="phone"
           name="phone"
-          value="{{contacts.phone}}"
+          value="{{phone}}"
           required
         />
         <br />
         <br />
         <input type="submit" value="Update Profile" />
       </form>
+      {{/each}}
     {{else}}
       <p>You must be logged in to access this page.</p>
     {{/if}}

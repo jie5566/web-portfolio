@@ -101,6 +101,7 @@ app.post("/login", (req, res) => {
           req.session.isAdmin = user.isAdmin;
           req.session.isLoggedIn = true;
           req.session.name = user.uname;
+          req.session.profile_id = user.profile_id;
           res.redirect("/");
         } else {
           // Passwords do not match
@@ -562,7 +563,7 @@ app.get("/projects/details/:id", (req, res) => {
 //User manager board
 
 // Add a route to display user data
-app.get("/userManager", function (req, res) {
+app.get("/user-manager", function (req, res) {
   if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
     db.all("SELECT * FROM users", function (error, theUsers) {
       if (error) {
@@ -595,20 +596,58 @@ app.get("/userManager", function (req, res) {
     res.redirect("/login");
   }
 });
+app.post("/user-manager/:uid", function (req, res) {
+  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
+    db.run(
+        "UPDATE users SET uname = ?, isAdmin = ? WHERE uid = ?",
+        [req.body.uname, req.body.isAdmin, req.params.uid],
+        (error) => {
+          if (error) {
+            console.log("ERROR: ", error);
+          } else {
+            console.log("User management info updated!");
+          }
+          res.redirect("/user-manager");
+        }
+    );
+  } else {
+    console.log("You are not Logged In");
+    // Redirect to the login page or display an error message
+    res.redirect("/login");
+  }
+});
+app.get("/user-manager/delete/:uid", function (req, res) {  const id = req.params.id;
+  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
+    db.run(
+        "DELETE FROM users WHERE uid=?",
+        [req.params.uid],
+        (error) => {
+          if (error) {
+            console.log("ERROR deleting user manager: ", error);
+          } else {
+            console.log("User management info deleted!");
+          }
+          res.redirect("/user-manager");
+        }
+    );
+  } else {
+    res.redirect("/login");
+  }
+});
 
 //change users profile
 
 app.get("/profile", function (req, res) {
   if (req.session.isLoggedIn == true) {
     db.all(
-      "SELECT * FROM contacts WHERE cid = ?",
-      [req.session.username],
-      function (error, theContacts) {
+      "SELECT * FROM profiles WHERE id = ?",
+      [req.session.profile_id],
+      function (error, profile) {
         if (error) {
           const model = {
             dbError: true,
             theError: error,
-            contacts: [],
+            profile: [],
             isAdmin: req.session.isAdmin,
             name: req.session.name,
             isLoggedIn: req.session.isLoggedIn,
@@ -619,7 +658,7 @@ app.get("/profile", function (req, res) {
           const model = {
             dbError: false,
             theError: "",
-            contacts: theContacts,
+            profile: profile,
             isAdmin: req.session.isAdmin,
             name: req.session.name,
             isLoggedIn: req.session.isLoggedIn,
@@ -644,13 +683,13 @@ app.post("/profile", (req, res) => {
 
     // Update user's phone and email in the database
     db.run(
-      "UPDATE contacts SET phone = ?, email = ? WHERE cid = ?",
-      [updatedPhone, updatedEmail, req.session.username],
+      "UPDATE profiles SET phone = ?, email = ? WHERE id = ?",
+      [updatedPhone, updatedEmail, req.session.profile_id],
       (error) => {
         if (error) {
           console.log("ERROR: ", error);
         } else {
-          console.log("Project updated!");
+          console.log("Profile updated!");
         }
         // res.render("home.handlebars", model);
         res.redirect("/profile");
