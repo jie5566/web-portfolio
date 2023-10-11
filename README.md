@@ -67,12 +67,11 @@ I received constructive feedback from my course instructor, which helped me refi
 
 ## Technology Stack
 
-[![My Skills](https://skillicons.dev/icons?i=html,css,javascript,nodejs,express,tailwindcss,sqlite,postman)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=html,css,javascript,nodejs,express)](https://skillicons.dev)
 
 1. HTML, CSS, JavaScript
 2. Node.js
 3. Express
-4. Tailwind.css
+4. Spectre.css
 5. SQLite3 (with DB Broswer)
-6. Postman
-7. (also handlebars to dynamically update pages)
+
