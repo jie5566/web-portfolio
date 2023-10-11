@@ -36,8 +36,8 @@ footer {
   list-style-type: none;
   overflow: hidden;
   color: rgb(0, 0, 0);
-  height: 64px;
-  width: 100vw;
+  height: 4%;
+  width: 100%;
 }
 
 footer div {
@@ -86,12 +86,13 @@ a.important {
 }
 
 .card-image {
-  height: 25vh;
+  height: 35vh;
   width: 100%;
-  object-fit: contain;
-  object-position: center;
-  justify-content: center;
 }
+.card-image img {
+  height: auto;
+}
+
 #login {
   color: #af1d1d;
 }
