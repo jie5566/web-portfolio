@@ -99,6 +99,7 @@ a.important {
 
 #new {
   color: #af1d1d;
+  background-color: #dfdcd3;
 }
 .form-input {
   background: #cbcbcb;
@@ -144,6 +145,14 @@ input[type="submit"] {
   margin: 0 1px;
   color: black;
 }
+
 #userContainer {
   width: 100%;
 }
+#modifySkill {
+  color: #6e5a07;
+}
+#deleteSkill {
+  color: #6e5a07;
+}
+

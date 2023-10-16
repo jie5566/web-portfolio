@@ -1,0 +1,39 @@
+<div id="main">
+
+  <h1>NEW SKILLS</h1>
+
+  <h2>
+    {{#if isLoggedIn}}
+      Hi,{{name}}! &nbsp; &nbsp;
+    {{/if}}</h2>
+
+  <div class="container" class="form-group">
+    {{#if isLoggedIn}}
+      {{#if isAdmin}}
+        <form  class="column col-6 col-md-10 col-sm-12" action="/skills/new" method="post">
+        <fieldset>
+            <label class="form-label" for="skillName">Skill name: </label>
+            <input class="form-input" type="text" name="skillName" id="skillName" required="required">
+            <br>
+            <label class="form-label" for="skillPro">Skill proficiency: </label>
+            <select class="form-select" name="skillPro" id="skillPro" required="required">
+                <option value="Basic">Basic</option>
+                <option value="Competent">Competent</option>
+                <option value="Skilled">Skilled</option>
+                <option value="Professional">Professional</option>
+            </select>
+            <br>
+        </fieldset>
+        <input type="submit" value="Add new skill">
+        </form>
+         {{else}}
+         <p>Sorry, you must be an administrator to add a new skill!</p>
+         {{/if}}
+     {{else}}
+       <p>
+         Sorry, you must login to add a new skill!
+       </p>
+     {{/if}}
+    </div>
+  </div>
+</div>

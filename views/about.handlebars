@@ -11,10 +11,18 @@
     </p>
     <br />
     <h2>I'm skilled in:</h2>
-    <br />
+    {{#if isAdmin}}
+      <div><a href="/skills/new" id="new" class="btn btn-link">NEW SKILLS</a></div>
+    {{/if}}
     <ul>
       {{#each skills}}
         <li><a href="/projects/skills/{{sid}}">{{sname}}</a> - ({{spro}})</li>
+        <div>
+          {{#if ../isAdmin}}
+            <a href="/skills/update/{{sid}}" id="modifySkill">Modify</a>
+            <a href="/skills/delete/{{sid}}" id="deleteSkill">Delete</a>
+            {{/if}}
+        </div>
       {{/each}}
     </ul>
 

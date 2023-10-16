@@ -152,6 +152,7 @@ app.get("/", (req, res) => {
   res.render("home.handlebars", model);
 });
 
+//reder about page, which contains my skills
 app.get("/about", (req, res) => {
   db.all("SELECT * FROM skills", function (error, theSkills) {
     if (error) {
@@ -210,6 +211,7 @@ app.get("/logout", function (req, res) {
   res.render("home.handlebars", model);
 });
 
+//projects part,it is a page show all my projects
 //pagination
 // Update the /projects route
 app.get("/projects", (req, res) => {
@@ -277,7 +279,7 @@ app.get("/projects", (req, res) => {
   });
 });
 
-// // renders a view WITH peoject DATA in projects
+// // renders a view WITH project DATA in projects
 // app.get("/projects", (req, res) => {
 //   db.all("SELECT * FROM projects", function (error, theProjects) {
 //     if (error) {
@@ -560,7 +562,139 @@ app.get("/projects/details/:id", (req, res) => {
   );
 });
 
-//User manager board
+//--------------------------skills parts-------------------------------------
+
+// deleting a skill
+app.get("/skills/delete/:sid", (req, res) => {
+  if (req.session.isLoggedIn && req.session.isAdmin) {
+    const skillId = req.params.sid; // Extract the skill ID from the URL
+    // Add code to query your database and delete the skill based on the skillId
+    db.run("DELETE FROM skills WHERE sid = ?", [skillId], (error) => {
+      if (error) {
+        console.log("Error deleting skill: ", error);
+      } else {
+        console.log("Skill deleted!");
+      }
+      // Redirect to the /about page or any other appropriate page
+      res.redirect("/about");
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+//adding a skill
+// Create a new route handler for /skills/new
+app.get("/skills/new", (req, res) => {
+  if (req.session.isLoggedIn && req.session.isAdmin) {
+    // If the user is logged in as an admin, render a page for adding new skills
+    const model = {
+      isLoggedIn: req.session.isLoggedIn,
+      name: req.session.name,
+      isAdmin: req.session.isAdmin,
+    };
+    res.render("newSkill.handlebars", model); // Create a newSkill.handlebars view for this page
+  } else {
+    res.redirect("/login");
+  }
+});
+
+// Handle the form submission to save the new skill
+app.post("/skills/new", (req, res) => {
+  if (req.session.isLoggedIn && req.session.isAdmin) {
+    // Extract data from the form submission
+    const skillName = req.body.skillName; // Make sure you have a corresponding input field in your newSkill.handlebars
+    const skillPro = req.body.skillPro;
+
+    // Save the new skill to your database (you may need to adapt this part based on your database structure)
+    db.run(
+      "INSERT INTO skills (sname, spro) VALUES (?, ?)",
+      [skillName, skillPro],
+      (error) => {
+        if (error) {
+          console.log("Error adding a new skill: ", error);
+        } else {
+          console.log("New skill added!");
+        }
+        // Redirect to the /about page or any other appropriate page
+        res.redirect("/about");
+      }
+    );
+  } else {
+    res.redirect("/login");
+  }
+});
+
+//modify a skill
+
+app.get("/skills/update/:id", (req, res) => {
+  const id = req.params.id;
+
+  db.get("SELECT * FROM skills WHERE sid=?", [id], function (error, theSkill) {
+    if (error) {
+      console.log("ERROR: ", error);
+      const model = {
+        dbError: true,
+        theError: error,
+        isLoggedIn: req.session.isLoggedIn,
+        name: req.session.name,
+        isAdmin: req.session.isAdmin,
+      };
+      // renders the page with the model
+      res.render("modifyskill.handlebars", model);
+    } else {
+      const model = {
+        skill: theSkill,
+        dbError: false,
+        theError: "",
+        isLoggedIn: req.session.isLoggedIn,
+        name: req.session.name,
+        isAdmin: req.session.isAdmin,
+        helpers: {
+          theTypeB(value) {
+            return value == "Basic";
+          },
+          theTypeC(value) {
+            return value == "Competent";
+          },
+          theTypeS(value) {
+            return value == "Skilled";
+          },
+          theTypeP(value) {
+            return value == "Professional";
+          },
+        },
+      };
+      // renders the page with the model
+      res.render("modifyskill.handlebars", model);
+    }
+  });
+});
+
+//modify an existing skill
+app.post("/skills/update/:id", (req, res) => {
+  const id = req.params.id; //gets the id from the dynamic parameter in the route
+  const newSkill = [req.body.skillName, req.body.skillPro, id];
+  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
+    db.run(
+      "UPDATE skills SET sname =?, spro=? WHERE sid=?",
+      newSkill,
+      (error) => {
+        if (error) {
+          console.log("ERROR: ", error);
+        } else {
+          console.log("Skill updated!");
+        }
+        // res.render("home.handlebars", model);
+        res.redirect("/about");
+      }
+    );
+  } else {
+    res.redirect("/login");
+  }
+});
+
+//--------------------User manager board---------------------------------------
 
 // Add a route to display user data
 app.get("/user-manager", function (req, res) {
@@ -599,16 +733,16 @@ app.get("/user-manager", function (req, res) {
 app.post("/user-manager/:uid", function (req, res) {
   if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
     db.run(
-        "UPDATE users SET uname = ?, isAdmin = ? WHERE uid = ?",
-        [req.body.uname, req.body.isAdmin, req.params.uid],
-        (error) => {
-          if (error) {
-            console.log("ERROR: ", error);
-          } else {
-            console.log("User management info updated!");
-          }
-          res.redirect("/user-manager");
+      "UPDATE users SET uname = ?, isAdmin = ? WHERE uid = ?",
+      [req.body.uname, req.body.isAdmin, req.params.uid],
+      (error) => {
+        if (error) {
+          console.log("ERROR: ", error);
+        } else {
+          console.log("User management info updated!");
         }
+        res.redirect("/user-manager");
+      }
     );
   } else {
     console.log("You are not Logged In");
@@ -616,20 +750,17 @@ app.post("/user-manager/:uid", function (req, res) {
     res.redirect("/login");
   }
 });
-app.get("/user-manager/delete/:uid", function (req, res) {  const id = req.params.id;
+app.get("/user-manager/delete/:uid", function (req, res) {
+  const id = req.params.id;
   if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
-    db.run(
-        "DELETE FROM users WHERE uid=?",
-        [req.params.uid],
-        (error) => {
-          if (error) {
-            console.log("ERROR deleting user manager: ", error);
-          } else {
-            console.log("User management info deleted!");
-          }
-          res.redirect("/user-manager");
-        }
-    );
+    db.run("DELETE FROM users WHERE uid=?", [req.params.uid], (error) => {
+      if (error) {
+        console.log("ERROR deleting user manager: ", error);
+      } else {
+        console.log("User management info deleted!");
+      }
+      res.redirect("/user-manager");
+    });
   } else {
     res.redirect("/login");
   }

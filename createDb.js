@@ -100,7 +100,7 @@ db.run(
 
 // creates skills projects at startup
 db.run(
-  "CREATE TABLE IF NOT EXISTS skills (sid INTEGER PRIMARY KEY, sname TEXT NOT NULL, stype TEXT NOT NULL, spro TEXT NOT NULL)",
+  "CREATE TABLE IF NOT EXISTS skills (sid INTEGER PRIMARY KEY, sname TEXT NOT NULL, stype TEXT, spro TEXT NOT NULL)",
   (error) => {
     if (error) {
       // tests error: display error

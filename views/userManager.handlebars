@@ -1,5 +1,5 @@
 <div id="main">
-  <div>
+  <div class="userSystem">
     <h1>User management system</h1>
     <h2>
       {{#if isLoggedIn}}
@@ -22,11 +22,7 @@
         <tbody>
           {{#each users}}
             <tr>
-              <form
-                class="column col-6 col-md-10 col-sm-12"
-                method="POST"
-                action="/user-manager/{{uid}}"
-              >
+              <form method="POST" action="/user-manager/{{uid}}">
                 <td>{{uid}}</td>
 
                 <td><input
